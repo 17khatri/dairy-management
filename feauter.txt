@@ -1,0 +1,309 @@
+# 🐄 Dairy Management System (Final Combined Spec for Codex)
+
+## 📌 Project Overview
+
+This is a **Dairy Management System** built using:
+
+* Next.js (App Router)
+* Tailwind CSS
+* Prisma ORM
+* PostgreSQL
+
+The app is designed for a **single admin user** to:
+
+* Manage suppliers (milk providers / cow boys)
+* Record milk collection entries
+* Track milk data (quantity, fat, price)
+* Support **date-wise and session-wise (morning/evening)** entries
+* Support **flexible pricing (default + override)**
+
+---
+
+## 🎯 Core Features (MVP)
+
+### 1. 👤 Supplier Management
+
+* Add new supplier
+* View list of suppliers
+
+Fields:
+
+* `name`
+* `defaultPrice` (price per liter)
+
+---
+
+### 2. 🥛 Milk Collection Entry
+
+Add milk collection record with:
+
+* Supplier (dropdown)
+* Date 📅
+* Session (Morning / Evening)
+* Quantity (liters)
+* Fat (%)
+* Price (optional override)
+
+---
+
+### 3. 📊 Records View
+
+Display all entries with:
+
+* Date
+* Session
+* Supplier Name
+* Quantity
+* Fat
+* Price
+* Total Amount
+
+---
+
+## 🧱 Final Prisma Schema
+
+```prisma
+model Supplier {
+  id           String   @id @default(uuid())
+  name         String
+  defaultPrice Float
+
+  createdAt    DateTime @default(now())
+
+  entries      MilkEntry[]
+}
+
+model MilkEntry {
+  id         String   @id @default(uuid())
+
+  supplier   Supplier @relation(fields: [supplierId], references: [id])
+  supplierId String
+
+  quantity   Float
+  fat        Float
+
+  // Optional override price
+  price      Float?
+
+  // Date-wise entry
+  date       DateTime
+
+  // Morning / Evening
+  session    Session
+
+  createdAt  DateTime @default(now())
+
+  // Prevent duplicate entry for same supplier, date, session
+  @@unique([supplierId, date, session])
+}
+
+enum Session {
+  MORNING
+  EVENING
+}
+```
+
+---
+
+## 🧠 Business Logic
+
+### 💰 Price Handling
+
+* Each supplier has a `defaultPrice`
+* While creating entry:
+
+  * If user provides price → use it
+  * Else → use supplier defaultPrice
+
+### 💡 Calculation
+
+```ts
+const appliedPrice = entry.price ?? supplier.defaultPrice
+const total = entry.quantity * appliedPrice
+```
+
+---
+
+## 🧾 Add Entry Form (UI Behavior)
+
+Fields:
+
+* Supplier (dropdown)
+* Date picker
+* Session (radio: MORNING / EVENING)
+* Quantity input
+* Fat input
+* Price input
+
+### UX Rules:
+
+* On supplier select → auto-fill price with `defaultPrice`
+* Price field is editable (user can override)
+
+---
+
+## 📊 Table View
+
+Columns:
+
+* Date
+* Session
+* Supplier Name
+* Quantity
+* Fat
+* Price (applied)
+* Total Amount
+
+---
+
+## ⚡ API Requirements
+
+### Suppliers API
+
+#### GET `/api/suppliers`
+
+* Return list of suppliers
+
+#### POST `/api/suppliers`
+
+```json
+{
+  "name": "Ramesh",
+  "defaultPrice": 35
+}
+```
+
+---
+
+### Entries API
+
+#### GET `/api/entries`
+
+* Return all entries with supplier info
+
+#### POST `/api/entries`
+
+```json
+{
+  "supplierId": "abc123",
+  "date": "2026-04-25",
+  "session": "MORNING",
+  "quantity": 10,
+  "fat": 4.5,
+  "price": 36
+}
+```
+
+---
+
+## 🚫 Constraints & Rules
+
+* Only one entry allowed per:
+
+  * supplier + date + session
+
+* Do NOT update old entries if supplier price changes
+
+---
+
+## 📁 Folder Structure
+
+```
+app/
+ ├── page.tsx
+ ├── suppliers/
+ │    ├── page.tsx
+ │    └── add/page.tsx
+ ├── entries/
+ │    ├── page.tsx
+ │    └── add/page.tsx
+ ├── api/
+ │    ├── suppliers/route.ts
+ │    └── entries/route.ts
+
+lib/
+ └── prisma.ts
+
+prisma/
+ └── schema.prisma
+```
+
+---
+
+## 🎨 UI Requirements
+
+### Dashboard
+
+* Add Supplier button
+* Add Entry button
+
+### Supplier Page
+
+* List suppliers
+* Add supplier form
+
+### Entry Page
+
+* Table view
+* Add entry form
+
+---
+
+## 🧠 Validation Rules
+
+* quantity > 0
+* fat > 0
+* price > 0 (if provided)
+* supplier required
+* date required
+* session required
+
+---
+
+## 🚀 Development Steps
+
+1. Setup Prisma & DB
+2. Apply schema:
+
+   ```
+   npx prisma db push
+   ```
+3. Build APIs
+4. Build UI
+5. Connect frontend + backend
+
+---
+
+## 🔮 Future Enhancements
+
+* Fat-based pricing system
+* Reports (daily/monthly)
+* Payment tracking
+* Export (Excel/PDF)
+* Authentication
+
+---
+
+## 💡 Coding Guidelines for Codex
+
+* Use TypeScript
+* Prefer Server Actions
+* Keep UI minimal (Tailwind)
+* Use reusable components
+* Handle errors (especially unique constraint)
+* Clean folder structure
+
+---
+
+## 🎯 Final Goal
+
+Build a **simple, scalable dairy management system** with:
+
+* Clean UI
+* Proper data structure
+* Real-world usability
+
+---
+
+
+Add Validation by using react hook form and zod
