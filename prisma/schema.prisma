@@ -16,12 +16,18 @@ enum Session {
   EVENING
 }
 
+enum PaymentSchedule {
+  DAILY
+  TEN_DAYS
+}
+
 model Supplier {
-  id           String      @id @default(uuid())
-  name         String
-  defaultPrice Float
-  createdAt    DateTime    @default(now())
-  entries      MilkEntry[]
+  id              String          @id @default(uuid())
+  name            String
+  defaultPrice    Float
+  paymentSchedule PaymentSchedule @default(DAILY)
+  createdAt       DateTime        @default(now())
+  entries         MilkEntry[]
 }
 
 model MilkEntry {
@@ -31,8 +37,10 @@ model MilkEntry {
   quantity   Float
   fat        Float
   price      Float?
+  paymentSchedule PaymentSchedule
   date       DateTime
   session    Session
+  paidAt     DateTime?
   createdAt  DateTime  @default(now())
 
   @@unique([supplierId, date, session])

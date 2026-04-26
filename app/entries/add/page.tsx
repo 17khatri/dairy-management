@@ -45,6 +45,7 @@ export default async function AddEntryPage() {
             id: supplier.id,
             name: supplier.name,
             defaultPrice: supplier.defaultPrice,
+            paymentSchedule: supplier.paymentSchedule,
           }))}
         />
       )}

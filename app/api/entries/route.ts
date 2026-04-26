@@ -94,6 +94,7 @@ export async function POST(request: Request) {
         quantity,
         fat,
         price,
+        paymentSchedule: supplier.paymentSchedule,
       },
       include: {
         supplier: true,

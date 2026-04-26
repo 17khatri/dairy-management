@@ -9,7 +9,7 @@ export default function AddSupplierPage() {
         <div>
           <p className="text-sm font-medium text-zinc-500">New supplier</p>
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-zinc-950">
-            Add a supplier and set the default price per liter.
+            Add a supplier, set the default price, and choose daily or 10 day payment.
           </h2>
         </div>
         <Link

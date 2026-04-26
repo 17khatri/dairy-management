@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation"
 
 import {
   formatDateInputValue,
+  formatPaymentSchedule,
   type SessionValue,
   type SupplierOption,
 } from "@/lib/dairy"
@@ -94,6 +95,11 @@ export function EntryForm({ suppliers }: EntryFormProps) {
             </option>
           ))}
         </select>
+        {selectedSupplier ? (
+          <p className="text-xs text-zinc-500">
+            Payment cycle: {formatPaymentSchedule(selectedSupplier.paymentSchedule)}
+          </p>
+        ) : null}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">

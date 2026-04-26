@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { MainNav } from "@/components/main-nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
   title: "Dairy Management System",
-  description: "Manage suppliers, milk entries, and daily totals.",
+  description: "Manage suppliers, milk entries, and payment settlements.",
 };
 
 export default function RootLayout({
@@ -22,29 +22,10 @@ export default function RootLayout({
                 Dairy Management System
               </p>
               <h1 className="mt-1 text-lg font-semibold text-zinc-900">
-                Suppliers, milk collection, and daily records
+                Suppliers, milk collection, and payments
               </h1>
             </div>
-            <nav className="flex flex-wrap gap-2 text-sm font-medium">
-              <Link
-                href="/"
-                className="rounded-full border border-zinc-300 px-4 py-2 text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-900"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/suppliers"
-                className="rounded-full border border-zinc-300 px-4 py-2 text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-900"
-              >
-                Suppliers
-              </Link>
-              <Link
-                href="/entries"
-                className="rounded-full border border-zinc-300 px-4 py-2 text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-900"
-              >
-                Entries
-              </Link>
-            </nav>
+            <MainNav />
           </header>
           <main className="flex-1 py-6">{children}</main>
         </div>

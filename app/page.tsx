@@ -1,7 +1,13 @@
 import Link from "next/link"
 
 import { prisma } from "@/lib/prisma"
-import { calculateAppliedPrice, calculateTotalAmount, formatAmount, formatDate } from "@/lib/dairy"
+import {
+  calculateAppliedPrice,
+  calculateTotalAmount,
+  formatAmount,
+  formatDate,
+  formatPaymentSchedule,
+} from "@/lib/dairy"
 
 export const dynamic = "force-dynamic"
 
@@ -36,7 +42,7 @@ export default async function HomePage() {
             Keep supplier pricing and daily milk collection in one place.
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-zinc-600">
-            Add suppliers, record morning and evening collection, and review applied prices and totals without manually recalculating anything.
+            Add suppliers, record morning and evening collection, and track daily or 10 day payments without manual calculations.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
@@ -50,6 +56,12 @@ export default async function HomePage() {
               className="rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-900"
             >
               Add entry
+            </Link>
+            <Link
+              href="/payments"
+              className="rounded-xl border border-zinc-300 px-4 py-2.5 text-sm font-medium text-zinc-700 transition hover:border-zinc-900 hover:text-zinc-900"
+            >
+              View payments
             </Link>
           </div>
         </div>
@@ -93,6 +105,9 @@ export default async function HomePage() {
                     <p className="font-medium text-zinc-950">{supplier.name}</p>
                     <p className="text-sm text-zinc-500">
                       Default price ₹{formatAmount(supplier.defaultPrice)}
+                    </p>
+                    <p className="text-sm text-zinc-500">
+                      {formatPaymentSchedule(supplier.paymentSchedule)}
                     </p>
                   </div>
                   <p className="text-sm text-zinc-500">Added {formatDate(supplier.createdAt)}</p>

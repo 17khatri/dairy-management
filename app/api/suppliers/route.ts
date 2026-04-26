@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server"
 
 import { prisma } from "@/lib/prisma"
-import { toSafeNumber } from "@/lib/dairy"
+import {
+  isValidPaymentSchedule,
+  toSafeNumber,
+} from "@/lib/dairy"
 
 export const dynamic = "force-dynamic"
 
@@ -24,11 +27,16 @@ export async function GET() {
 
 export async function POST(request: Request) {
   const body = (await request.json().catch(() => null)) as
-    | { name?: unknown; defaultPrice?: unknown }
+    | {
+        name?: unknown
+        defaultPrice?: unknown
+        paymentSchedule?: unknown
+      }
     | null
 
   const name = typeof body?.name === "string" ? body.name.trim() : ""
   const defaultPrice = toSafeNumber(body?.defaultPrice)
+  const paymentSchedule = body?.paymentSchedule
 
   if (!name) {
     return NextResponse.json({ error: "Supplier name is required." }, { status: 400 })
@@ -41,10 +49,18 @@ export async function POST(request: Request) {
     )
   }
 
+  if (!isValidPaymentSchedule(paymentSchedule)) {
+    return NextResponse.json(
+      { error: "Payment schedule must be DAILY or TEN_DAYS." },
+      { status: 400 },
+    )
+  }
+
   const supplier = await prisma.supplier.create({
     data: {
       name,
       defaultPrice,
+      paymentSchedule,
     },
   })
 
